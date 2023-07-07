@@ -1,0 +1,15 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Users</h1>
+
+<div id="users">
+  <% @users.each do |user| %>
+    <%= render user %>
+    <p>
+      <a href="<%= user_url(user.id) %>"><%= user.username %></a>
+    </p>
+  <% end %>
+</div>
+
+<a href="<%= new_user_url %>">Create New User</a>
+
