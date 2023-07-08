@@ -1,5 +1,6 @@
 class SubsController < ApplicationController
-  before_action :set_sub, only: %i[ show edit update destroy ]
+  before_action :require_logged_in, only:[:new, :create, :update, :edit]
+  before_action :is_moderator?, only:[:edit,:update]
 
   # GET /subs
   def index
@@ -8,6 +9,7 @@ class SubsController < ApplicationController
 
   # GET /subs/1
   def show
+    @sub = Sub.find_by(id: params[:id])
   end
 
   # GET /subs/new
@@ -17,42 +19,49 @@ class SubsController < ApplicationController
 
   # GET /subs/1/edit
   def edit
+    @sub = Sub.find_by(id: params[:id])
+    render :edit
   end
 
   # POST /subs
   def create
     @sub = Sub.new(sub_params)
-
     if @sub.save
-      redirect_to @sub, notice: "Sub was successfully created."
+      redirect_to sub_url
     else
-      render :new, status: :unprocessable_entity
+      flash.now[:errors] = @sub.errors.full_messages 
+      render :new
     end
   end
 
   # PATCH/PUT /subs/1
   def update
-    if @sub.update(sub_params)
-      redirect_to @sub, notice: "Sub was successfully updated."
+    @sub = sub.find_by(id:params[:id])
+    if @sub && @sub.update(sub_params)
+      redirect_to user_url(@sub.moderator_id)
     else
-      render :edit, status: :unprocessable_entity
-    end
+      @sub = Sub.new(sub_params)
+      flash.now[:errors] = ["sub not found"] 
+    end 
+    render :edit
   end
 
   # DELETE /subs/1
   def destroy
     @sub.destroy
-    redirect_to subs_url, notice: "Sub was successfully destroyed.", status: :see_other
+    redirect_to subs_url
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_sub
-      @sub = Sub.find(params[:id])
-    end
 
     # Only allow a list of trusted parameters through.
     def sub_params
-      params.fetch(:sub, {})
+      params.require(:sub).permit(:title)
     end
+
+    def is_moderator?
+      render json: "no access" if current_user.id != @sub.moderator_id # put if condition in separate line
+    end
+
+
 end

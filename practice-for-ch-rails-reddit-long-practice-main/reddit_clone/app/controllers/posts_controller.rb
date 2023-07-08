@@ -1,10 +1,7 @@
 class PostsController < ApplicationController
   before_action :set_post, only: %i[ show edit update destroy ]
 
-  # GET /posts
-  def index
-    @posts = Post.all
-  end
+
 
   # GET /posts/1
   def show
@@ -39,20 +36,12 @@ class PostsController < ApplicationController
     end
   end
 
-  # DELETE /posts/1
-  def destroy
-    @post.destroy
-    redirect_to posts_url, notice: "Post was successfully destroyed.", status: :see_other
-  end
+
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_post
-      @post = Post.find(params[:id])
-    end
 
     # Only allow a list of trusted parameters through.
     def post_params
-      params.fetch(:post, {})
+      params.require(:post).permit(:title, :url, :content, :author_id, :subreddit_id)
     end
 end

@@ -1,9 +1,16 @@
 <h1>New sub</h1>
 
-<%= render "form", sub: @sub %>
+<form action="<%= subs_url %>" method="POST">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="sub[moderator_id]" value="<%= current_user.id %>">
 
-<br>
+  <label>Title
+    <input type="text" name="sub[title]" value="<%= @sub.title %>">
+  </label>
 
-<div>
-  <%= link_to "Back to subs", subs_path %>
-</div>
+    <label>Description
+    <input type="text" name="sub[description]" value="<%= @sub.description %>">
+  </label>
+
+  <input type="submit" value="create sub">
+</form>

@@ -1,10 +1,16 @@
 <h1>Editing sub</h1>
 
-<%= render "form", sub: @sub %>
+<form action="<%= sub_url(@sub.id) %>" method="POST">
+  <input type="hidden" name="_method" value="PATCH">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
 
-<br>
+  <label>Title
+    <input type="text" name="sub[title]" value="<%= @sub.title %>">
+  </label>
 
-<div>
-  <%= link_to "Show this sub", @sub %> |
-  <%= link_to "Back to subs", subs_path %>
-</div>
+    <label>Description
+    <input type="text" name="sub[description]" value="<%= @sub.description %>">
+  </label>
+
+  <input type="submit" value="update sub">
+</form>
